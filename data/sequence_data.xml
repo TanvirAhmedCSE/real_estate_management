@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_real_estate_booking" model="ir.sequence">
+        <field name="name">Real Estate Booking</field>
+        <field name="code">real.estate.booking</field>
+        <field name="prefix">BK/%(year)s/</field>
+        <field name="padding">5</field>
+    </record>
+</odoo>

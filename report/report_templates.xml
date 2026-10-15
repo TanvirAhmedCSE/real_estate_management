@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Booking slip -->
+    <template id="report_booking_slip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Booking Slip <small t-out="o.name"/></h2>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <p><strong>Customer:</strong> <span t-field="o.partner_id"/></p>
+                                <p><strong>Phone:</strong> <span t-out="o.partner_id.phone or '-'"/></p>
+                                <p><strong>Booking date:</strong> <span t-field="o.booking_date"/></p>
+                                <p t-if="o.agent_id"><strong>Sales agent:</strong> <span t-field="o.agent_id"/></p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Project:</strong> <span t-field="o.project_id"/></p>
+                                <p><strong>Unit:</strong> <span t-out="o.unit_id.display_name"/></p>
+                                <p><strong>Type / Size:</strong> <span t-field="o.unit_id.unit_type"/> / <span t-field="o.unit_id.size"/> <span t-field="o.unit_id.size_unit"/></p>
+                                <p><strong>Floor:</strong> <span t-out="o.unit_id.floor or '-'"/></p>
+                            </div>
+                        </div>
+                        <table class="table table-sm mt-3">
+                            <tbody>
+                                <tr><td>Unit price</td><td class="text-end"><span t-field="o.unit_price" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                                <tr><td>Discount</td><td class="text-end"><span t-field="o.discount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                                <tr><td><strong>Total price</strong></td><td class="text-end"><strong><span t-field="o.total_price" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></strong></td></tr>
+                                <tr><td>Booking money</td><td class="text-end"><span t-field="o.booking_money" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                                <tr><td>Down payment</td><td class="text-end"><span t-field="o.down_payment" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                                <tr><td>Handover payment</td><td class="text-end"><span t-field="o.handover_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                                <tr><td>Installments</td><td class="text-end"><span t-out="o.installment_count"/> x <span t-field="o.installment_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/> (every <span t-out="o.interval_months"/> month)</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="row mt-5 pt-5">
+                            <div class="col-6 text-center">______________________<br/>Customer Signature</div>
+                            <div class="col-6 text-center">______________________<br/>Authorized Signature</div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Statement per unit -->
+    <template id="report_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Statement <small t-out="o.name"/></h2>
+                        <p>
+                            <strong>Customer:</strong> <span t-field="o.partner_id"/> |
+                            <strong>Unit:</strong> <span t-out="o.unit_id.display_name"/> |
+                            <strong>Total price:</strong> <span t-field="o.total_price" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                        </p>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>#</th><th>Description</th><th>Due Date</th>
+                                    <th class="text-end">Amount</th><th class="text-end">Late Fee</th>
+                                    <th>Status</th><th>Paid On</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.line_ids.filtered(lambda l: l.state != 'cancel')" t-as="l">
+                                    <tr>
+                                        <td><t t-out="l_index + 1"/></td>
+                                        <td><t t-out="l.name"/></td>
+                                        <td><span t-field="l.due_date"/></td>
+                                        <td class="text-end"><span t-field="l.amount" t-options="{'widget': 'monetary', 'display_currency': l.currency_id}"/></td>
+                                        <td class="text-end"><span t-field="l.late_fee" t-options="{'widget': 'monetary', 'display_currency': l.currency_id}"/></td>
+                                        <td><span t-field="l.state"/></td>
+                                        <td><span t-field="l.paid_date"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <table class="table table-sm w-50 ms-auto">
+                            <tr><td>Total paid</td><td class="text-end"><span t-field="o.paid_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                            <tr><td>Balance</td><td class="text-end"><span t-field="o.balance_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                            <tr><td>Overdue (incl. late fee)</td><td class="text-end"><span t-field="o.overdue_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Payment receipt -->
+    <template id="report_receipt">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Payment Receipt</h2>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <p><strong>Received from:</strong> <span t-field="o.partner_id"/></p>
+                                <p><strong>Booking:</strong> <span t-out="o.booking_id.name"/></p>
+                                <p><strong>Unit:</strong> <span t-out="o.unit_id.display_name"/></p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Date:</strong> <span t-field="o.paid_date"/></p>
+                                <p><strong>Reference:</strong> <span t-out="o.invoice_id.name or '-'"/></p>
+                            </div>
+                        </div>
+                        <table class="table table-sm mt-3">
+                            <thead><tr><th>Description</th><th class="text-end">Amount</th></tr></thead>
+                            <tbody>
+                                <tr><td t-out="o.name"/><td class="text-end"><span t-field="o.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                                <tr t-if="o.late_fee"><td>Late fee</td><td class="text-end"><span t-field="o.late_fee" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                                <tr><td><strong>Total received</strong></td><td class="text-end"><strong><span t-field="o.total_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></strong></td></tr>
+                            </tbody>
+                        </table>
+                        <p class="mt-4">Remaining balance on this booking:
+                            <span t-field="o.booking_id.balance_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

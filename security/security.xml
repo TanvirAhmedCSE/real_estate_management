@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_real_estate" model="ir.module.category">
+        <field name="name">Real Estate</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="privilege_real_estate" model="res.groups.privilege">
+        <field name="name">Real Estate</field>
+        <field name="category_id" ref="module_category_real_estate"/>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Hierarchy: Manager -> Accountant -> Agent -->
+    <record id="group_real_estate_agent" model="res.groups">
+        <field name="privilege_id" ref="privilege_real_estate"/>
+        <field name="name">Real Estate: Sales Agent</field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="group_real_estate_accountant" model="res.groups">
+        <field name="privilege_id" ref="privilege_real_estate"/>
+        <field name="name">Real Estate: Accountant</field>
+        <field name="implied_ids" eval="[(4, ref('group_real_estate_agent'))]"/>
+    </record>
+    <record id="group_real_estate_manager" model="res.groups">
+        <field name="privilege_id" ref="privilege_real_estate"/>
+        <field name="name">Real Estate: Manager</field>
+        <field name="implied_ids" eval="[(4, ref('group_real_estate_accountant'))]"/>
+    </record>
+
+    <!-- Booking -->
+    <record id="rule_booking_agent" model="ir.rule">
+        <field name="name">Booking: agent sees own</field>
+        <field name="model_id" ref="model_real_estate_booking"/>
+        <field name="domain_force">[('agent_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_real_estate_agent'))]"/>
+    </record>
+    <record id="rule_booking_accountant" model="ir.rule">
+        <field name="name">Booking: accountant sees all</field>
+        <field name="model_id" ref="model_real_estate_booking"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_real_estate_accountant'))]"/>
+    </record>
+    <record id="rule_booking_portal" model="ir.rule">
+        <field name="name">Booking: customer sees own</field>
+        <field name="model_id" ref="model_real_estate_booking"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <!-- Installment line -->
+    <record id="rule_line_agent" model="ir.rule">
+        <field name="name">Installment: agent sees own bookings'</field>
+        <field name="model_id" ref="model_real_estate_installment_line"/>
+        <field name="domain_force">[('booking_id.agent_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_real_estate_agent'))]"/>
+    </record>
+    <record id="rule_line_accountant" model="ir.rule">
+        <field name="name">Installment: accountant sees all</field>
+        <field name="model_id" ref="model_real_estate_installment_line"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_real_estate_accountant'))]"/>
+    </record>
+    <record id="rule_line_portal" model="ir.rule">
+        <field name="name">Installment: customer sees own</field>
+        <field name="model_id" ref="model_real_estate_installment_line"/>
+        <field name="domain_force">[('booking_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <!-- Commission -->
+    <record id="rule_commission_agent" model="ir.rule">
+        <field name="name">Commission: agent sees own</field>
+        <field name="model_id" ref="model_real_estate_commission"/>
+        <field name="domain_force">[('agent_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_real_estate_agent'))]"/>
+    </record>
+    <record id="rule_commission_accountant" model="ir.rule">
+        <field name="name">Commission: accountant sees all</field>
+        <field name="model_id" ref="model_real_estate_commission"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_real_estate_accountant'))]"/>
+    </record>
+</odoo>

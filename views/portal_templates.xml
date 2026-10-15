@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_booking" name="Portal: My Units" inherit_id="portal.portal_my_home" priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">My Units &amp; Installments</t>
+                <t t-set="url" t-value="'/my/bookings'"/>
+                <t t-set="placeholder_count" t-value="'booking_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_bookings" name="Portal: My Bookings">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <div class="container py-3">
+                <h3 class="mb-3">My Units &amp; Installments</h3>
+                <t t-if="not bookings">
+                    <p class="alert alert-warning">You have no property bookings yet.</p>
+                </t>
+                <t t-if="bookings" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="active">
+                            <th>Booking</th>
+                            <th>Unit</th>
+                            <th class="text-end">Total Price</th>
+                            <th class="text-end">Paid</th>
+                            <th class="text-end">Overdue</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="bookings" t-as="booking">
+                            <tr>
+                                <td><a t-attf-href="/my/bookings/#{booking.id}"><t t-out="booking.name"/></a></td>
+                                <td><t t-out="booking.unit_id.display_name"/></td>
+                                <td class="text-end"><span t-field="booking.total_price" t-options="{'widget': 'monetary', 'display_currency': booking.currency_id}"/></td>
+                                <td class="text-end"><span t-field="booking.paid_amount" t-options="{'widget': 'monetary', 'display_currency': booking.currency_id}"/></td>
+                                <td class="text-end"><span t-field="booking.overdue_amount" t-options="{'widget': 'monetary', 'display_currency': booking.currency_id}"/></td>
+                                <td class="text-center"><span class="badge text-bg-info" t-out="dict(booking._fields['state'].selection).get(booking.state)"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_booking" name="Portal: Booking Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="False"/>
+            <div class="container py-3">
+                <p><a href="/my/bookings"><i class="fa fa-angle-left"/> My Units</a></p>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="mb-0"><t t-out="booking.name"/> · <t t-out="booking.unit_id.display_name"/></h3>
+                    <a class="btn btn-secondary btn-sm" t-attf-href="/my/bookings/#{booking.id}/statement">
+                        <i class="fa fa-download"/> Statement (PDF)
+                    </a>
+                </div>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <p class="mb-1"><b>Project:</b> <t t-out="booking.project_id.name"/></p>
+                        <p class="mb-1"><b>Booking date:</b> <span t-field="booking.booking_date"/></p>
+                        <p class="mb-1"><b>Status:</b> <t t-out="dict(booking._fields['state'].selection).get(booking.state)"/></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1"><b>Total price:</b> <span t-field="booking.total_price" t-options="{'widget': 'monetary', 'display_currency': booking.currency_id}"/></p>
+                        <p class="mb-1"><b>Paid:</b> <span t-field="booking.paid_amount" t-options="{'widget': 'monetary', 'display_currency': booking.currency_id}"/></p>
+                        <p class="mb-1"><b>Balance:</b> <span t-field="booking.balance_amount" t-options="{'widget': 'monetary', 'display_currency': booking.currency_id}"/></p>
+                        <p class="mb-1 text-danger" t-if="booking.overdue_amount"><b>Overdue:</b> <span t-field="booking.overdue_amount" t-options="{'widget': 'monetary', 'display_currency': booking.currency_id}"/></p>
+                    </div>
+                </div>
+                <h5>Installments</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>Installment</th>
+                                <th>Due Date</th>
+                                <th class="text-end">Amount</th>
+                                <th class="text-end">Late Fee</th>
+                                <th class="text-center">Status</th>
+                                <th/>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="booking.line_ids.filtered(lambda l: l.state != 'cancel')" t-as="line">
+                                <tr>
+                                    <td><t t-out="line.name"/></td>
+                                    <td><span t-field="line.due_date"/></td>
+                                    <td class="text-end"><span t-field="line.amount" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/></td>
+                                    <td class="text-end"><span t-field="line.late_fee" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/></td>
+                                    <td class="text-center">
+                                        <span t-if="line.state == 'paid'" class="badge text-bg-success">Paid</span>
+                                        <span t-elif="line.state == 'overdue'" class="badge text-bg-danger">Overdue</span>
+                                        <span t-else="" class="badge text-bg-warning">Due</span>
+                                    </td>
+                                    <td class="text-end">
+                                        <a t-if="line.state in ('due', 'overdue')" class="btn btn-primary btn-sm"
+                                           t-attf-href="/my/installments/#{line.id}/pay">Pay Now</a>
+                                        <a t-if="line.state == 'paid'" class="btn btn-link btn-sm"
+                                           t-attf-href="/my/installments/#{line.id}/receipt">Receipt</a>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

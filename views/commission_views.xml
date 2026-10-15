@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_commission_list" model="ir.ui.view">
+        <field name="name">real.estate.commission.list</field>
+        <field name="model">real.estate.commission</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="booking_id"/>
+                <field name="agent_id"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="base_amount"/>
+                <field name="rate"/>
+                <field name="amount" sum="Total"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_commission_form" model="ir.ui.view">
+        <field name="name">real.estate.commission.form</field>
+        <field name="model">real.estate.commission</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <header>
+                    <button name="action_approve" string="Approve" type="object" class="btn-primary"
+                            invisible="state != 'draft'"
+                            groups="real_estate_management.group_real_estate_manager"/>
+                    <button name="action_pay" string="Mark as Paid" type="object" class="btn-primary"
+                            invisible="state != 'approved'"
+                            groups="real_estate_management.group_real_estate_manager"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state not in ('draft', 'approved')"
+                            groups="real_estate_management.group_real_estate_manager"/>
+                    <button name="action_draft" string="Set to Draft" type="object"
+                            invisible="state != 'cancel'"
+                            groups="real_estate_management.group_real_estate_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="booking_id"/>
+                            <field name="agent_id"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="base_amount"/>
+                            <field name="rate" readonly="state != 'draft'"/>
+                            <field name="amount"/>
+                            <field name="approved_date"/>
+                            <field name="paid_date"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_commission" model="ir.actions.act_window">
+        <field name="name">Commissions</field>
+        <field name="res_model">real.estate.commission</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

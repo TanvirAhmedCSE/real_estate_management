@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_line_list" model="ir.ui.view">
+        <field name="name">real.estate.installment.line.list</field>
+        <field name="model">real.estate.installment.line</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'overdue'" decoration-success="state == 'paid'"
+                  decoration-muted="state == 'cancel'" create="0">
+                <field name="booking_id"/>
+                <field name="partner_id"/>
+                <field name="unit_id"/>
+                <field name="name"/>
+                <field name="due_date"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="amount" sum="Amount"/>
+                <field name="late_fee" sum="Late Fee"/>
+                <field name="total_amount" sum="Total"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_line_form" model="ir.ui.view">
+        <field name="name">real.estate.installment.line.form</field>
+        <field name="model">real.estate.installment.line</field>
+        <field name="arch" type="xml">
+            <form create="0">
+                <header>
+                    <button name="action_create_invoice" string="Create Invoice" type="object"
+                            invisible="invoice_id or state in ('paid', 'cancel')"
+                            groups="real_estate_management.group_real_estate_accountant"/>
+                    <button name="action_send_reminder" string="Send Reminder" type="object"
+                            invisible="state not in ('due', 'overdue')"
+                            groups="real_estate_management.group_real_estate_accountant"/>
+                    <button name="action_waive_late_fee" string="Waive Late Fee" type="object"
+                            invisible="not late_fee or state == 'paid'"
+                            groups="real_estate_management.group_real_estate_accountant"
+                            confirm="Waive the late fee?"/>
+                    <button name="action_send_receipt" string="Send Receipt" type="object"
+                            invisible="state != 'paid'"
+                            groups="real_estate_management.group_real_estate_accountant"/>
+                    <field name="state" widget="statusbar" statusbar_visible="due,overdue,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoice" type="object" class="oe_stat_button"
+                                icon="fa-pencil-square-o" invisible="not invoice_id"
+                                groups="real_estate_management.group_real_estate_accountant">
+                            <div class="o_stat_info"><span class="o_stat_text">Invoice</span></div>
+                        </button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="booking_id"/>
+                            <field name="partner_id"/>
+                            <field name="unit_id"/>
+                            <field name="line_type"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="due_date"/>
+                            <field name="amount"/>
+                            <field name="late_fee"/>
+                            <field name="total_amount"/>
+                            <field name="paid_date"/>
+                            <field name="invoice_id"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_line_search" model="ir.ui.view">
+        <field name="name">real.estate.installment.line.search</field>
+        <field name="model">real.estate.installment.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="booking_id"/>
+                <field name="partner_id"/>
+                <field name="unit_id"/>
+                <field name="project_id"/>
+                <filter name="due" string="Due" domain="[('state', '=', 'due')]"/>
+                <filter name="overdue" string="Overdue" domain="[('state', '=', 'overdue')]"/>
+                <filter name="paid" string="Paid" domain="[('state', '=', 'paid')]"/>
+                <filter name="due_this_month" string="Due This Month"
+                        domain="[('state', 'in', ('due', 'overdue')),
+                                 ('due_date', '&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d')),
+                                 ('due_date', '&lt;=', (context_today() + relativedelta(day=31)).strftime('%Y-%m-%d'))]"/>
+                <group>
+                    <filter name="group_booking" string="Booking" context="{'group_by': 'booking_id'}"/>
+                    <filter name="group_project" string="Project" context="{'group_by': 'project_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_due_month" string="Due Month" context="{'group_by': 'due_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_line_pivot" model="ir.ui.view">
+        <field name="name">real.estate.installment.line.pivot</field>
+        <field name="model">real.estate.installment.line</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="project_id" type="row"/>
+                <field name="due_date" interval="month" type="col"/>
+                <field name="total_amount" type="measure"/>
+                <field name="paid_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_line_graph" model="ir.ui.view">
+        <field name="name">real.estate.installment.line.graph</field>
+        <field name="model">real.estate.installment.line</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="due_date" interval="month"/>
+                <field name="total_amount" type="measure"/>
+                <field name="paid_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_line" model="ir.actions.act_window">
+        <field name="name">Installments</field>
+        <field name="res_model">real.estate.installment.line</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_line_search"/>
+        <field name="context">{'search_default_due_this_month': 1}</field>
+    </record>
+
+    <record id="action_line_overdue" model="ir.actions.act_window">
+        <field name="name">Overdue Installments</field>
+        <field name="res_model">real.estate.installment.line</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_line_search"/>
+        <field name="context">{'search_default_overdue': 1}</field>
+    </record>
+</odoo>

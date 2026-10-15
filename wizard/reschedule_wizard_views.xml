@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_reschedule_wizard_form" model="ir.ui.view">
+        <field name="name">real.estate.reschedule.wizard.form</field>
+        <field name="model">real.estate.reschedule.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="booking_id"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="pending_count"/>
+                        <field name="pending_amount"/>
+                    </group>
+                    <group>
+                        <field name="new_count"/>
+                        <field name="interval_months"/>
+                        <field name="first_date"/>
+                    </group>
+                </group>
+                <field name="reason" placeholder="Reason for rescheduling..."/>
+                <footer>
+                    <button name="action_reschedule" string="Reschedule" type="object" class="btn-primary"/>
+                    <button string="Discard" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

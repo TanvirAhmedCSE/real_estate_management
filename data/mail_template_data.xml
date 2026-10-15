@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="mail_template_installment_reminder" model="mail.template">
+        <field name="name">Real Estate: Installment Reminder</field>
+        <field name="model_id" ref="model_real_estate_installment_line"/>
+        <field name="subject">Installment reminder: {{ object.name }} due {{ object.due_date }} ({{ object.booking_id.name }})</field>
+        <field name="email_from">{{ object.company_id.email_formatted or user.email_formatted }}</field>
+        <field name="email_to">{{ object.partner_id.email_formatted }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:0;font-size:14px;">
+    <p>Dear <t t-out="object.partner_id.name or ''">Customer</t>,</p>
+    <p>This is a friendly reminder that your installment is due soon.</p>
+    <table style="border-collapse:collapse;">
+        <tr><td style="padding:2px 12px 2px 0;"><b>Booking</b></td><td t-out="object.booking_id.name"/></tr>
+        <tr><td style="padding:2px 12px 2px 0;"><b>Unit</b></td><td t-out="object.unit_id.display_name"/></tr>
+        <tr><td style="padding:2px 12px 2px 0;"><b>Installment</b></td><td t-out="object.name"/></tr>
+        <tr><td style="padding:2px 12px 2px 0;"><b>Due date</b></td><td t-out="object.due_date"/></tr>
+        <tr><td style="padding:2px 12px 2px 0;"><b>Amount</b></td><td t-out="object.total_amount" t-options="{'widget': 'monetary', 'display_currency': object.currency_id}"/></tr>
+    </table>
+    <t t-if="object.payment_link">
+        <p style="margin:16px 0;"><a t-att-href="object.payment_link" style="background:#875A7B;color:#fff;padding:8px 16px;text-decoration:none;border-radius:4px;">Pay Online</a></p>
+    </t>
+    <p>Please pay on or before the due date to avoid late fees.</p>
+    <p>Thank you,<br/><t t-out="object.company_id.name"/></p>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_installment_overdue" model="mail.template">
+        <field name="name">Real Estate: Overdue Installment</field>
+        <field name="model_id" ref="model_real_estate_installment_line"/>
+        <field name="subject">OVERDUE: {{ object.name }} ({{ object.booking_id.name }})</field>
+        <field name="email_from">{{ object.company_id.email_formatted or user.email_formatted }}</field>
+        <field name="email_to">{{ object.partner_id.email_formatted }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:0;font-size:14px;">
+    <p>Dear <t t-out="object.partner_id.name or ''">Customer</t>,</p>
+    <p>Your installment <b t-out="object.name"/> for <b t-out="object.unit_id.display_name"/> was due on
+       <b t-out="object.due_date"/> and is now <b style="color:#c0392b;">overdue</b>.</p>
+    <table style="border-collapse:collapse;">
+        <tr><td style="padding:2px 12px 2px 0;">Installment</td><td t-out="object.amount" t-options="{'widget': 'monetary', 'display_currency': object.currency_id}"/></tr>
+        <tr><td style="padding:2px 12px 2px 0;">Late fee</td><td t-out="object.late_fee" t-options="{'widget': 'monetary', 'display_currency': object.currency_id}"/></tr>
+        <tr><td style="padding:2px 12px 2px 0;"><b>Total payable</b></td><td><b t-out="object.total_amount" t-options="{'widget': 'monetary', 'display_currency': object.currency_id}"/></td></tr>
+    </table>
+    <t t-if="object.payment_link">
+        <p style="margin:16px 0;"><a t-att-href="object.payment_link" style="background:#c0392b;color:#fff;padding:8px 16px;text-decoration:none;border-radius:4px;">Pay Now</a></p>
+    </t>
+    <p>Please settle the amount as soon as possible.</p>
+    <p>Thank you,<br/><t t-out="object.company_id.name"/></p>
+</div>
+        </field>
+    </record>
+
+    <record id="mail_template_payment_receipt" model="mail.template">
+        <field name="name">Real Estate: Payment Receipt</field>
+        <field name="model_id" ref="model_real_estate_installment_line"/>
+        <field name="subject">Payment receipt: {{ object.name }} ({{ object.booking_id.name }})</field>
+        <field name="email_from">{{ object.company_id.email_formatted or user.email_formatted }}</field>
+        <field name="email_to">{{ object.partner_id.email_formatted }}</field>
+        <field name="report_template_ids" eval="[(4, ref('action_report_receipt'))]"/>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+<div style="margin:0;padding:0;font-size:14px;">
+    <p>Dear <t t-out="object.partner_id.name or ''">Customer</t>,</p>
+    <p>We have received your payment of
+       <b t-out="object.total_amount" t-options="{'widget': 'monetary', 'display_currency': object.currency_id}"/>
+       for <b t-out="object.name"/> (<t t-out="object.unit_id.display_name"/>). Your receipt is attached.</p>
+    <p>Thank you,<br/><t t-out="object.company_id.name"/></p>
+</div>
+        </field>
+    </record>
+</odoo>

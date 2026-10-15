@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="demo_agent" model="res.partner">
+        <field name="name">Demo Sales Agent</field>
+        <field name="email">agent@example.com</field>
+        <field name="is_agent" eval="True"/>
+        <field name="commission_rate">2.0</field>
+    </record>
+    <record id="demo_customer" model="res.partner">
+        <field name="name">Demo Property Buyer</field>
+        <field name="email">buyer@example.com</field>
+        <field name="phone">01700000000</field>
+    </record>
+
+    <record id="demo_project" model="real.estate.project">
+        <field name="name">Green Valley Residency</field>
+        <field name="code">GVR</field>
+        <field name="location">Rajshahi</field>
+    </record>
+    <record id="demo_building_a" model="real.estate.building">
+        <field name="name">Block A</field>
+        <field name="project_id" ref="demo_project"/>
+        <field name="floors">8</field>
+    </record>
+
+    <record id="demo_unit_a1" model="real.estate.unit">
+        <field name="name">A-101</field>
+        <field name="project_id" ref="demo_project"/>
+        <field name="building_id" ref="demo_building_a"/>
+        <field name="unit_type">flat</field>
+        <field name="floor">1</field>
+        <field name="size">1250</field>
+        <field name="price">6000000</field>
+    </record>
+    <record id="demo_unit_a2" model="real.estate.unit">
+        <field name="name">A-102</field>
+        <field name="project_id" ref="demo_project"/>
+        <field name="building_id" ref="demo_building_a"/>
+        <field name="unit_type">flat</field>
+        <field name="floor">1</field>
+        <field name="size">1100</field>
+        <field name="price">5200000</field>
+    </record>
+    <record id="demo_unit_p1" model="real.estate.unit">
+        <field name="name">Plot-7</field>
+        <field name="project_id" ref="demo_project"/>
+        <field name="unit_type">plot</field>
+        <field name="size">5</field>
+        <field name="size_unit">katha</field>
+        <field name="price">4500000</field>
+    </record>
+
+    <record id="demo_booking_1" model="real.estate.booking">
+        <field name="partner_id" ref="demo_customer"/>
+        <field name="agent_id" ref="demo_agent"/>
+        <field name="unit_id" ref="demo_unit_a2"/>
+        <field name="booking_money">200000</field>
+        <field name="down_payment">1000000</field>
+        <field name="handover_amount">500000</field>
+        <field name="installment_count">24</field>
+        <field name="interval_months">1</field>
+    </record>
+</odoo>

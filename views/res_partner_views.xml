@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_real_estate" model="ir.ui.view">
+        <field name="name">res.partner.form.real.estate</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_re_bookings" type="object" class="oe_stat_button" icon="fa-home"
+                        invisible="re_booking_count == 0"
+                        groups="real_estate_management.group_real_estate_agent">
+                    <field name="re_booking_count" widget="statinfo" string="Bookings"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Real Estate" name="real_estate"
+                      groups="real_estate_management.group_real_estate_manager">
+                    <group>
+                        <field name="is_agent"/>
+                        <field name="commission_rate" invisible="not is_agent"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
