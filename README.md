@@ -3,7 +3,8 @@
 [![Odoo](https://img.shields.io/badge/Odoo-19.0-875A7B)](https://www.odoo.com)
 [![License: LGPL-3](https://img.shields.io/badge/License-LGPL--3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
-An Odoo 19 module for developers and builders who sell **flats, plots and shops on installments**. It covers the full sales lifecycle: booking, agreement, installment plan, automatic late fees, email reminders, receipts, agent commissions, a customer portal, and online payment through **SSLCommerz**. [**[See Screenshots]**](#screenshots)
+An Odoo 19 module for developers and builders who sell **flats, plots and shops on installments**. It covers the full sales lifecycle: booking, agreement, installment plan, automatic late fees, email reminders, receipts, agent commissions, a customer portal, and online payment through **SSLCommerz**. 
+[**[See Screenshots]**](#screenshots)
 
 ---
 
