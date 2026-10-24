@@ -381,7 +381,7 @@ erDiagram
 
 <img src="module screenshots/36.png" width="700"/>
 
-##### Customer Mobile App (Booking Request) 
+##### Customer Mobile App (Booking Requests) 
 <table>
   <tr>
     <td align="center"><img src="module screenshots/1b.jpg" width="220"/></td>
