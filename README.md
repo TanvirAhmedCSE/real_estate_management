@@ -379,6 +379,10 @@ erDiagram
 
 <img src="module screenshots/36.png" width="700"/>
 
+<img src="module screenshots/26.png" width="700"/>
+
+<img src="module screenshots/25.png" width="700"/>
+
 <img src="module screenshots/35.png" width="700"/>
 
 <img src="module screenshots/32.png" width="700"/>
@@ -395,17 +399,13 @@ erDiagram
 
 <img src="module screenshots/27.png" width="700"/>
 
-<img src="module screenshots/26.png" width="700"/>
-
-<img src="module screenshots/25.png" width="700"/>
-
 <img src="module screenshots/24.png" width="700"/>
-
-<img src="module screenshots/23.png" width="700"/>
 
 <img src="module screenshots/22.png" width="700"/>
 
 <img src="module screenshots/21.png" width="700"/>
+
+<img src="module screenshots/23.png" width="700"/>
 
 <img src="module screenshots/20.png" width="700"/>
 
