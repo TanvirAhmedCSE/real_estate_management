@@ -382,25 +382,25 @@ erDiagram
 ##### Mobile App (Booking Request) 
 <table>
   <tr>
-    <td align="center"><img src="module screenshots/1b.png" width="220"/></td>
-    <td align="center"><img src="module screenshots/2b.png" width="220"/></td>
-    <td align="center"><img src="module screenshots/3b.png" width="220"/></td>
+    <td align="center"><img src="module screenshots/1b.jpg" width="220"/></td>
+    <td align="center"><img src="module screenshots/2b.jpg" width="220"/></td>
+    <td align="center"><img src="module screenshots/3b.jpg" width="220"/></td>
   </tr>
 </table>
 
 <table>
   <tr>
-    <td align="center"><img src="module screenshots/4b.png" width="220"/></td>
-    <td align="center"><img src="module screenshots/5b.png" width="220"/></td>
-    <td align="center"><img src="module screenshots/6b.png" width="220"/></td>
+    <td align="center"><img src="module screenshots/4b.jpg" width="220"/></td>
+    <td align="center"><img src="module screenshots/5b.jpg" width="220"/></td>
+    <td align="center"><img src="module screenshots/6b.jpg" width="220"/></td>
   </tr>
 </table>
 
 <table>
   <tr>
-    <td align="center"><img src="module screenshots/7b.png" width="220"/></td>
-    <td align="center"><img src="module screenshots/8b.png" width="220"/></td>
-    <td align="center"><img src="module screenshots/9b.png" width="220"/></td>
+    <td align="center"><img src="module screenshots/7b.jpg" width="220"/></td>
+    <td align="center"><img src="module screenshots/8b.jpg" width="220"/></td>
+    <td align="center"><img src="module screenshots/9b.jpg" width="220"/></td>
   </tr>
 </table>
 
