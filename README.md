@@ -195,7 +195,7 @@ Manager  ──▶  Accountant  ──▶  Sales Agent  ──▶  Internal User
 | **Sales Agent** | Create and edit own bookings, confirm drafts, view own installments and commissions, view properties, view booking requests |
 | **Accountant** | See all bookings, installments and commissions. Create invoices, send reminders and receipts, waive late fees. |
 | **Manager** | Everything: agreements, plans, handover, reschedule, cancel, commission approval, properties, dashboard, settings |
-| **Portal customer** | Read-only access to their own bookings and installments |
+| **Portal Customer** | Read-only access to their own bookings and installments |
 
 Record rules restrict agents and customers to their own records. The installment-pay and receipt portal routes rely on these rules. Report and invoice operations run with `sudo()` only after the access check.
 
@@ -461,7 +461,7 @@ erDiagram
 
 <img src="module screenshots/9.png" width="700"/>
 
-#### Portal customer
+#### Portal Customer
 
 <img src="module screenshots/4.png" width="700"/>
 
