@@ -373,17 +373,17 @@ erDiagram
 
 <img src="module screenshots/38.png" width="700"/>
 
+<img src="module screenshots/34.png" width="700"/>
+
 <img src="module screenshots/37.png" width="700"/>
 
 <img src="module screenshots/36.png" width="700"/>
 
 <img src="module screenshots/35.png" width="700"/>
 
-<img src="module screenshots/34.png" width="700"/>
+<img src="module screenshots/32.png" width="700"/>
 
 <img src="module screenshots/33.png" width="700"/>
-
-<img src="module screenshots/32.png" width="700"/>
 
 <img src="module screenshots/31.png" width="700"/>
 
