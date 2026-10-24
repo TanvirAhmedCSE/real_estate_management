@@ -400,7 +400,6 @@ erDiagram
   <tr>
     <td align="center"><img src="module screenshots/7b.jpg" width="220"/></td>
     <td align="center"><img src="module screenshots/8b.jpg" width="220"/></td>
-    <td align="center"><img src="module screenshots/9b.jpg" width="220"/></td>
   </tr>
 </table>
 
