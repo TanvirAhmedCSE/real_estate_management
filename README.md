@@ -361,7 +361,7 @@ erDiagram
 
 <img src="module screenshots/41.png" width="700"/>
 
-<img src="module screenshots/40.png" width="700"/>
+<img src="module screenshots/40a.png" width="700"/>
 
 <img src="module screenshots/8.png" width="700"/>
 
