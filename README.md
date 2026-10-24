@@ -407,9 +407,9 @@ erDiagram
 
 <img src="module screenshots/23.png" width="700"/>
 
-<img src="module screenshots/20.png" width="700"/>
-
 <img src="module screenshots/19.png" width="700"/>
+
+<img src="module screenshots/20.png" width="700"/>
 
 <img src="module screenshots/18.png" width="700"/>
 
