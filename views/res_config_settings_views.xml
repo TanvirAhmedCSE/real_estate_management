@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_real_estate" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.real.estate</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="45"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="Real Estate" name="real_estate_management"
+                     groups="real_estate_management.group_real_estate_manager">
+                    <block title="Installment Rules" name="re_installment_rules">
+                        <setting string="Late Fee (%)"
+                                 help="Charged once on the installment amount when it becomes overdue.">
+                            <field name="re_late_fee_percent"/>
+                        </setting>
+                        <setting string="Grace Period (days)"
+                                 help="Days after the due date before an installment is marked overdue.">
+                            <field name="re_grace_days"/>
+                        </setting>
+                        <setting string="Reminder (days before due)"
+                                 help="Customers get an email reminder this many days before the due date.">
+                            <field name="re_reminder_days"/>
+                        </setting>
+                        <setting string="Cancellation Deduction (%)"
+                                 help="Default percentage deducted from the paid amount when a booking is cancelled.">
+                            <field name="re_cancel_deduction_percent"/>
+                        </setting>
+                    </block>
+                    <block title="Mobile App Sync" name="re_app_sync">
+                        <setting string="App API URL"
+                                 help="Base URL of the REST API, e.g. https://your-api.onrender.com">
+                            <field name="re_api_url" placeholder="https://..."/>
+                        </setting>
+                        <setting string="App API Secret"
+                                 help="Must match SYNC_SECRET on the API server.">
+                            <field name="re_api_secret" password="True"/>
+                        </setting>
+                    </block>
+                    <block title="Unit Images (Cloudinary)" name="re_cloudinary">
+                        <setting string="Cloud Name"
+                                 help="Shown on the Cloudinary dashboard, e.g. my-company.">
+                            <field name="re_cloudinary_cloud_name"/>
+                        </setting>
+                        <setting string="API Key" help="Cloudinary dashboard > API Keys.">
+                            <field name="re_cloudinary_api_key"/>
+                        </setting>
+                        <setting string="API Secret"
+                                 help="Used to sign uploads and deletions. Keep it private.">
+                            <field name="re_cloudinary_api_secret" password="True"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_re_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'module': 'real_estate_management', 'bin_size': False}</field>
+    </record>
+</odoo>

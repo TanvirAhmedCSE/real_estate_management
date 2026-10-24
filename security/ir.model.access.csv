@@ -1,0 +1,21 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_project_agent,project agent,model_real_estate_project,group_real_estate_agent,1,0,0,0
+access_project_manager,project manager,model_real_estate_project,group_real_estate_manager,1,1,1,1
+access_building_agent,building agent,model_real_estate_building,group_real_estate_agent,1,0,0,0
+access_building_manager,building manager,model_real_estate_building,group_real_estate_manager,1,1,1,1
+access_unit_agent,unit agent,model_real_estate_unit,group_real_estate_agent,1,0,0,0
+access_unit_manager,unit manager,model_real_estate_unit,group_real_estate_manager,1,1,1,1
+access_booking_agent,booking agent,model_real_estate_booking,group_real_estate_agent,1,1,1,0
+access_booking_accountant,booking accountant,model_real_estate_booking,group_real_estate_accountant,1,1,0,0
+access_booking_manager,booking manager,model_real_estate_booking,group_real_estate_manager,1,1,1,1
+access_booking_portal,booking portal,model_real_estate_booking,base.group_portal,1,0,0,0
+access_line_agent,line agent,model_real_estate_installment_line,group_real_estate_agent,1,0,0,0
+access_line_accountant,line accountant,model_real_estate_installment_line,group_real_estate_accountant,1,1,0,0
+access_line_manager,line manager,model_real_estate_installment_line,group_real_estate_manager,1,1,1,1
+access_line_portal,line portal,model_real_estate_installment_line,base.group_portal,1,0,0,0
+access_commission_agent,commission agent,model_real_estate_commission,group_real_estate_agent,1,0,0,0
+access_commission_manager,commission manager,model_real_estate_commission,group_real_estate_manager,1,1,1,1
+access_reschedule_wizard_manager,reschedule wizard manager,model_real_estate_reschedule_wizard,group_real_estate_manager,1,1,1,1
+access_cancel_wizard_manager,cancel wizard manager,model_real_estate_cancel_wizard,group_real_estate_manager,1,1,1,1
+access_request_agent,request agent,model_real_estate_booking_request,group_real_estate_agent,1,0,0,0
+access_request_manager,request manager,model_real_estate_booking_request,group_real_estate_manager,1,1,1,1

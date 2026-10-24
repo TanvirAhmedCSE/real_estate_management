@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_re_root" name="Real Estate" sequence="30"
+              web_icon="real_estate_management,static/description/icon.png"
+              groups="real_estate_management.group_real_estate_agent"/>
+
+    <menuitem id="menu_re_dashboard" name="Dashboard" parent="menu_re_root" action="action_re_dashboard"
+              sequence="5" groups="real_estate_management.group_real_estate_manager"/>
+
+    <menuitem id="menu_re_sales" name="Sales" parent="menu_re_root" sequence="10"/>
+    <menuitem id="menu_re_bookings" name="Bookings" parent="menu_re_sales" action="action_booking" sequence="10"/>
+    <menuitem id="menu_re_requests" name="Booking Requests" parent="menu_re_sales" action="action_booking_request_sync" sequence="15"/>
+    <menuitem id="menu_re_installments" name="Installments" parent="menu_re_sales" action="action_line" sequence="20"/>
+    <menuitem id="menu_re_overdue" name="Overdue" parent="menu_re_sales" action="action_line_overdue" sequence="30"/>
+    <menuitem id="menu_re_commissions" name="Commissions" parent="menu_re_sales" action="action_commission" sequence="40"/>
+
+    <menuitem id="menu_re_properties" name="Properties" parent="menu_re_root" sequence="20"/>
+    <menuitem id="menu_re_units" name="Units" parent="menu_re_properties" action="action_unit" sequence="10"/>
+    <menuitem id="menu_re_projects" name="Projects" parent="menu_re_properties" action="action_project" sequence="20"/>
+    <menuitem id="menu_re_buildings" name="Buildings / Blocks" parent="menu_re_properties" action="action_building"
+              sequence="30" groups="real_estate_management.group_real_estate_manager"/>
+
+    <menuitem id="menu_re_config" name="Configuration" parent="menu_re_root" sequence="90"
+              groups="real_estate_management.group_real_estate_manager"/>
+    <menuitem id="menu_re_settings" name="Settings" parent="menu_re_config" action="action_re_settings" sequence="10"/>
+</odoo>

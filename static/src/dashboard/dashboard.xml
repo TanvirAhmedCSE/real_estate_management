@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="real_estate_management.Dashboard">
+        <div class="o_re_dashboard">
+            <div class="o_re_wrap">
+
+                <!-- Header -->
+                <header class="o_re_header">
+                    <div class="o_re_title">
+                        <span class="o_re_title_icon"><i class="fa fa-building"/></span>
+                        <div>
+                            <h1>Real Estate BD Dashboard</h1>
+                            <p>Overview of your projects, sales and collections</p>
+                        </div>
+                    </div>
+                    <div class="o_re_controls">
+                        <div class="o_re_range">
+                            <i class="fa fa-calendar"/>
+                            <select class="o_re_select" t-on-change="onPresetChange" aria-label="Period">
+                                <t t-foreach="presets" t-as="p" t-key="p.key">
+                                    <option t-att-value="p.key" t-att-selected="state.preset === p.key" t-esc="p.label"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="o_re_dates" t-if="state.preset === 'custom'">
+                            <input type="date" class="o_re_date" t-att-value="state.dateFrom"
+                                   t-on-change="(ev) => this.onDateChange('dateFrom', ev)" aria-label="From"/>
+                            <span>to</span>
+                            <input type="date" class="o_re_date" t-att-value="state.dateTo"
+                                   t-on-change="(ev) => this.onDateChange('dateTo', ev)" aria-label="To"/>
+                        </div>
+                        <button class="o_re_btn o_re_btn_light" t-on-click="load" title="Refresh">
+                            <i t-attf-class="fa fa-refresh {{ state.loading ? 'fa-spin' : '' }}"/>
+                        </button>
+                        <div class="o_re_export" t-ref="exportRef">
+                            <button class="o_re_btn o_re_btn_primary" t-on-click="toggleExport"
+                                    t-att-disabled="!state.data || state.exporting"
+                                    aria-haspopup="true" t-att-aria-expanded="state.exportOpen ? 'true' : 'false'">
+                                <i t-attf-class="fa {{ state.exporting ? 'fa-circle-o-notch fa-spin' : 'fa-download' }}"/>
+                                <span>Export Report</span>
+                                <i class="fa fa-caret-down o_re_caret"/>
+                            </button>
+                            <ul t-if="state.exportOpen" class="o_re_menu" role="menu">
+                                <li t-foreach="exportFormats" t-as="f" t-key="f.key" role="none">
+                                    <button type="button" class="o_re_menu_item" role="menuitem"
+                                            t-on-click="() => this.exportReport(f.key)">
+                                        <i t-attf-class="fa {{ f.icon }} fmt-{{ f.key }}"/>
+                                        <span class="txt">
+                                            <strong t-esc="f.label"/>
+                                            <small t-esc="f.hint"/>
+                                        </span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Error / first load -->
+                <div t-if="state.error" class="o_re_card o_re_state">
+                    <i class="fa fa-exclamation-triangle"/>
+                    <p t-esc="state.error"/>
+                    <button class="o_re_btn o_re_btn_primary" t-on-click="load">Try again</button>
+                </div>
+                <div t-elif="!state.data" class="o_re_card o_re_state">
+                    <i class="fa fa-circle-o-notch fa-spin"/>
+                    <p>Loading dashboard...</p>
+                </div>
+
+                <t t-else="">
+                    <div t-attf-class="o_re_body {{ state.loading ? 'is-loading' : '' }}">
+
+                        <!-- KPI cards -->
+                        <section class="o_re_kpis">
+                            <t t-foreach="kpis" t-as="kpi" t-key="kpi.key">
+                                <div t-attf-class="o_re_kpi tone-{{ kpi.tone }}" role="button" tabindex="0"
+                                     t-on-click="kpi.onClick">
+                                    <span class="o_re_kpi_icon"><i t-attf-class="fa {{ kpi.icon }}"/></span>
+                                    <div class="o_re_kpi_body">
+                                        <div class="o_re_kpi_label" t-esc="kpi.label"/>
+                                        <div class="o_re_kpi_value" t-esc="kpi.value"/>
+                                        <div class="o_re_kpi_sub">
+                                            <span t-esc="kpi.sub"/>
+                                            <span t-if="kpi.delta" t-attf-class="o_re_delta {{ kpi.delta.up ? 'up' : 'down' }}">
+                                                <i t-attf-class="fa {{ kpi.delta.up ? 'fa-caret-up' : 'fa-caret-down' }}"/>
+                                                <t t-esc="kpi.delta.text"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <i class="fa fa-angle-right o_re_kpi_arrow"/>
+                                </div>
+                            </t>
+                        </section>
+
+                        <div class="o_re_grid">
+
+                            <!-- Trend -->
+                            <section class="o_re_card c-trend">
+                                <div class="o_re_card_head">
+                                    <h2><i class="fa fa-line-chart"/> Bookings &amp; Collection Trend</h2>
+                                    <div class="o_re_legend">
+                                        <span><i class="dot" style="background:#3a6df0"/> Bookings</span>
+                                        <span><i class="dot" style="background:#2e9e6b"/> Collection</span>
+                                    </div>
+                                </div>
+                                <t t-set="tr" t-value="trend"/>
+                                <svg class="o_re_trend" t-attf-viewBox="0 0 {{ tr.W }} {{ tr.H }}" role="img"
+                                     aria-label="Bookings and collection trend">
+                                    <defs>
+                                        <linearGradient id="reGradB" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0" stop-color="#3a6df0" stop-opacity="0.22"/>
+                                            <stop offset="1" stop-color="#3a6df0" stop-opacity="0"/>
+                                        </linearGradient>
+                                        <linearGradient id="reGradC" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0" stop-color="#2e9e6b" stop-opacity="0.2"/>
+                                            <stop offset="1" stop-color="#2e9e6b" stop-opacity="0"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <t t-foreach="tr.ticks" t-as="t" t-key="t_index">
+                                        <line t-att-x1="tr.pl" t-att-x2="tr.W - tr.pr" t-att-y1="t.y" t-att-y2="t.y" class="grid"/>
+                                        <text t-att-x="tr.pl - 6" t-att-y="t.y + 3" text-anchor="end" class="axis" t-esc="t.left"/>
+                                        <text t-att-x="tr.W - tr.pr + 6" t-att-y="t.y + 3" text-anchor="start" class="axis" t-esc="t.right"/>
+                                    </t>
+                                    <path t-att-d="tr.bArea" fill="url(#reGradB)"/>
+                                    <path t-att-d="tr.cArea" fill="url(#reGradC)"/>
+                                    <path t-att-d="tr.bLine" class="line" stroke="#3a6df0"/>
+                                    <path t-att-d="tr.cLine" class="line" stroke="#2e9e6b"/>
+                                    <t t-foreach="tr.bDots" t-as="d" t-key="d_index">
+                                        <circle t-att-cx="d.x" t-att-cy="d.y" r="3.5" fill="#3a6df0"><title t-esc="d.tip"/></circle>
+                                    </t>
+                                    <t t-foreach="tr.cDots" t-as="d" t-key="d_index">
+                                        <circle t-att-cx="d.x" t-att-cy="d.y" r="3.5" fill="#2e9e6b"><title t-esc="d.tip"/></circle>
+                                    </t>
+                                    <t t-foreach="tr.labels" t-as="l" t-key="l_index">
+                                        <text t-att-x="l.x" t-att-y="tr.H - 8" text-anchor="middle" class="axis" t-esc="l.text"/>
+                                    </t>
+                                </svg>
+                                <div class="o_re_axis_note"><span>Bookings (left)</span><span>Collection (right)</span></div>
+                            </section>
+
+                            <!-- Units by type -->
+                            <section class="o_re_card c-type">
+                                <div class="o_re_card_head">
+                                    <h2><i class="fa fa-pie-chart"/> Units by Type</h2>
+                                </div>
+                                <t t-set="dn" t-value="donut"/>
+                                <div class="o_re_donut_wrap">
+                                    <svg class="o_re_donut" viewBox="0 0 200 200" role="img" aria-label="Units by type">
+                                        <circle cx="100" cy="100" t-att-r="dn.R" class="track"/>
+                                        <t t-foreach="dn.segments" t-as="s" t-key="s.key">
+                                            <circle cx="100" cy="100" t-att-r="dn.R" class="seg" t-att-stroke="s.color"
+                                                    t-att-stroke-dasharray="s.dash" t-att-stroke-dashoffset="s.offset"
+                                                    transform="rotate(-90 100 100)"/>
+                                        </t>
+                                        <text x="100" y="100" text-anchor="middle" class="donut_num" t-esc="dn.total"/>
+                                        <text x="100" y="118" text-anchor="middle" class="donut_cap">Total Units</text>
+                                    </svg>
+                                    <ul class="o_re_donut_legend">
+                                        <li t-foreach="dn.segments" t-as="s" t-key="s.key">
+                                            <i class="dot" t-attf-style="background:{{ s.color }}"/>
+                                            <span class="name" t-esc="s.label"/>
+                                            <span class="val"><t t-esc="s.count"/> <small>(<t t-esc="s.percent"/>%)</small></span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </section>
+
+                            <!-- Sales by project -->
+                            <section class="o_re_card c-project">
+                                <div class="o_re_card_head">
+                                    <h2><i class="fa fa-bar-chart"/> Sales by Project</h2>
+                                </div>
+                                <div t-if="!projects.length" class="o_re_empty">No sales yet</div>
+                                <ul class="o_re_bars">
+                                    <li t-foreach="projects" t-as="p" t-key="p_index">
+                                        <span class="name" t-esc="p.label"/>
+                                        <span class="bar"><i t-attf-style="width:{{ p.width }}%;background:{{ p.color }}"/></span>
+                                        <span class="val" t-esc="p.count"/>
+                                    </li>
+                                </ul>
+                            </section>
+
+                            <!-- Recent bookings -->
+                            <section class="o_re_card c-bookings">
+                                <div class="o_re_card_head">
+                                    <h2><i class="fa fa-list-alt"/> Recent Bookings</h2>
+                                    <a href="#" class="o_re_link" t-on-click.prevent="viewAllBookings">View All</a>
+                                </div>
+                                <div class="o_re_table_wrap">
+                                    <table class="o_re_table">
+                                        <thead>
+                                            <tr>
+                                                <th>Booking</th><th>Customer</th><th>Unit</th>
+                                                <th class="hide_md">Project</th><th class="num">Amount</th>
+                                                <th>Status</th><th class="hide_sm">Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="bookings" t-as="b" t-key="b.id" t-on-click="() => this.openBooking(b.id)">
+                                                <td class="strong" t-esc="b.name"/>
+                                                <td t-esc="b.customer"/>
+                                                <td t-esc="b.unit"/>
+                                                <td class="hide_md" t-esc="b.project"/>
+                                                <td class="num" t-esc="money(b.amount)"/>
+                                                <td><span t-attf-class="o_re_chip tone-{{ b.tone }}" t-esc="b.state_label"/></td>
+                                                <td class="hide_sm" t-esc="shortDate(b.date)"/>
+                                            </tr>
+                                            <tr t-if="!bookings.length"><td colspan="7" class="o_re_empty">No bookings yet</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+
+                            <!-- Upcoming and overdue installments -->
+                            <section class="o_re_card c-installments">
+                                <div class="o_re_card_head">
+                                    <h2><i class="fa fa-clock-o"/> Upcoming &amp; Overdue Installments</h2>
+                                    <a href="#" class="o_re_link" t-on-click.prevent="viewAllInstallments">View All</a>
+                                </div>
+                                <div class="o_re_table_wrap">
+                                    <table class="o_re_table">
+                                        <thead>
+                                            <tr><th>Due Date</th><th>Customer</th><th class="num">Amount</th><th>Status</th></tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="installments" t-as="l" t-key="l.id" t-on-click="() => this.openBooking(l.booking_id)">
+                                                <td t-attf-class="{{ l.status === 'overdue' ? 'late' : '' }}" t-esc="shortDate(l.due_date)"/>
+                                                <td t-esc="l.customer"/>
+                                                <td class="num" t-esc="money(l.amount)"/>
+                                                <td><span t-attf-class="o_re_chip tone-{{ l.tone }}" t-esc="l.label"/></td>
+                                            </tr>
+                                            <tr t-if="!installments.length"><td colspan="4" class="o_re_empty">Nothing due right now</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>
+
+                            <!-- Recent activities -->
+                            <section class="o_re_card c-activity">
+                                <div class="o_re_card_head">
+                                    <h2><i class="fa fa-bell-o"/> Recent Activities</h2>
+                                </div>
+                                <ul class="o_re_activity">
+                                    <li t-foreach="activities" t-as="a" t-key="a_index">
+                                        <span t-attf-class="ico tone-{{ a.tone }}"><i t-attf-class="fa {{ a.icon }}"/></span>
+                                        <span class="txt" t-esc="a.label"/>
+                                        <span class="when" t-esc="timeAgo(a.ts)"/>
+                                    </li>
+                                    <li t-if="!activities.length" class="o_re_empty">No activity yet</li>
+                                </ul>
+                            </section>
+
+                            <!-- Collection overview -->
+                            <section class="o_re_card c-overview">
+                                <div class="o_re_card_head">
+                                    <h2><i class="fa fa-money"/> Collection Overview</h2>
+                                    <span t-if="state.data.overview.change !== null" t-attf-class="o_re_delta {{ state.data.overview.change >= 0 ? 'up' : 'down' }}">
+                                        <t t-esc="state.data.overview.change >= 0 ? '+' : ''"/><t t-esc="state.data.overview.change"/>% vs last period
+                                    </span>
+                                </div>
+                                <div class="o_re_overview_total" t-esc="money(state.data.overview.collected)"/>
+                                <div class="o_re_overview_cap">Total collection (selected period)</div>
+                                <div class="o_re_progress">
+                                    <i t-attf-style="width:{{ state.data.overview.collected_pct }}%"/>
+                                </div>
+                                <div class="o_re_overview_legend">
+                                    <div>
+                                        <span class="lbl"><i class="dot" style="background:#2e9e6b"/> Collected</span>
+                                        <strong><t t-esc="money(state.data.overview.collected)"/> (<t t-esc="state.data.overview.collected_pct"/>%)</strong>
+                                    </div>
+                                    <div>
+                                        <span class="lbl"><i class="dot" style="background:#d6dbe7"/> Pending</span>
+                                        <strong><t t-esc="money(state.data.overview.pending)"/> (<t t-esc="state.data.overview.pending_pct"/>%)</strong>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <!-- Banner -->
+                            <section class="o_re_banner c-banner">
+                                <img class="o_re_banner_img" src="/real_estate_management/static/src/dashboard/building.png" alt=""/>
+                                <div class="o_re_banner_text">
+                                    <h3>More Sales, Happy Customers</h3>
+                                    <p>Efficient real estate management for a<br/>better tomorrow.</p>
+                                    <button class="o_re_btn o_re_btn_glass" t-on-click="viewBookingRequests">
+                                        <i class="fa fa-bar-chart"/> Booking Requests
+                                    </button>
+                                </div>
+                            </section>
+
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
+
+</templates>

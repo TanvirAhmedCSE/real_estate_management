@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_unit_list" model="ir.ui.view">
+        <field name="name">real.estate.unit.list</field>
+        <field name="model">real.estate.unit</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'available'" decoration-warning="state == 'booked'"
+                  decoration-muted="state == 'sold'">
+                <field name="project_id"/>
+                <field name="building_id"/>
+                <field name="name"/>
+                <field name="unit_type"/>
+                <field name="floor"/>
+                <field name="size"/>
+                <field name="size_unit"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="price"/>
+                <field name="buyer_id"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_unit_form" model="ir.ui.view">
+        <field name="name">real.estate.unit.form</field>
+        <field name="model">real.estate.unit</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="available,booked,sold"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" placeholder="Unit No."/></h1></div>
+                    <group>
+                        <group>
+                            <field name="project_id"/>
+                            <field name="building_id"/>
+                            <field name="unit_type"/>
+                            <field name="floor"/>
+                        </group>
+                        <group>
+                            <field name="size"/>
+                            <field name="size_unit"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="price"/>
+                            <field name="buyer_id"/>
+                            <field name="booking_id"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Notes..."/>
+                    <notebook>
+                        <page string="Images" name="images">
+                            <div class="text-muted mb-2">
+                                Select one or more JPG, PNG or WEBP photos. They are uploaded when you save,
+                                and the first one is the cover shown in the mobile app.
+                            </div>
+                            <field name="image_attachment_ids" widget="many2many_binary" nolabel="1"
+                                   options="{'accepted_file_extensions': 'image/jpeg,image/png,image/webp'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_unit_kanban" model="ir.ui.view">
+        <field name="name">real.estate.unit.kanban</field>
+        <field name="model">real.estate.unit</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" records_draggable="false" quick_create="false"
+                    class="o_kanban_small_column">
+                <templates>
+                    <t t-name="card">
+                        <div class="fw-bold fs-5"><field name="display_name"/></div>
+                        <div class="text-muted">
+                            <field name="unit_type"/> · <field name="size"/> <field name="size_unit"/>
+                            <span t-if="record.floor.raw_value"> · Floor <field name="floor"/></span>
+                        </div>
+                        <div class="mt-1"><field name="price" widget="monetary"/></div>
+                        <div t-if="record.buyer_id.raw_value" class="text-muted">
+                            <i class="fa fa-user" title="Buyer"/> <field name="buyer_id"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_unit_search" model="ir.ui.view">
+        <field name="name">real.estate.unit.search</field>
+        <field name="model">real.estate.unit</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="building_id"/>
+                <field name="buyer_id"/>
+                <filter name="available" string="Available" domain="[('state', '=', 'available')]"/>
+                <filter name="booked" string="Booked" domain="[('state', '=', 'booked')]"/>
+                <filter name="sold" string="Sold" domain="[('state', '=', 'sold')]"/>
+                <group>
+                    <filter name="group_project" string="Project" context="{'group_by': 'project_id'}"/>
+                    <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'unit_type'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_unit" model="ir.actions.act_window">
+        <field name="name">Units</field>
+        <field name="res_model">real.estate.unit</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+</odoo>

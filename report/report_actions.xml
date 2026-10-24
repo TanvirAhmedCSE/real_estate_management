@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_booking_slip" model="ir.actions.report">
+        <field name="name">Booking Slip</field>
+        <field name="model">real.estate.booking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">real_estate_management.report_booking_slip</field>
+        <field name="report_file">real_estate_management.report_booking_slip</field>
+        <field name="print_report_name">'Booking Slip - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_real_estate_booking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_statement" model="ir.actions.report">
+        <field name="name">Unit Statement</field>
+        <field name="model">real.estate.booking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">real_estate_management.report_statement</field>
+        <field name="report_file">real_estate_management.report_statement</field>
+        <field name="print_report_name">'Statement - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_real_estate_booking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_receipt" model="ir.actions.report">
+        <field name="name">Payment Receipt</field>
+        <field name="model">real.estate.installment.line</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">real_estate_management.report_receipt</field>
+        <field name="report_file">real_estate_management.report_receipt</field>
+        <field name="print_report_name">'Receipt - %s - %s' % (object.booking_id.name, object.name)</field>
+        <field name="binding_model_id" ref="model_real_estate_installment_line"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_dashboard" model="ir.actions.report">
+        <field name="name">Real Estate Dashboard</field>
+        <field name="model">real.estate.dashboard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">real_estate_management.report_dashboard</field>
+        <field name="report_file">real_estate_management.report_dashboard</field>
+    </record>
+</odoo>

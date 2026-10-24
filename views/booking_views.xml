@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_booking_list" model="ir.ui.view">
+        <field name="name">real.estate.booking.list</field>
+        <field name="model">real.estate.booking</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="overdue_count &gt; 0" decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="booking_date"/>
+                <field name="partner_id"/>
+                <field name="unit_id"/>
+                <field name="agent_id"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="total_price" sum="Total"/>
+                <field name="paid_amount" sum="Paid"/>
+                <field name="overdue_count" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-success="state in ('installment', 'handover')"
+                       decoration-info="state in ('booked', 'agreement')"
+                       decoration-danger="state == 'cancel'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_booking_form" model="ir.ui.view">
+        <field name="name">real.estate.booking.form</field>
+        <field name="model">real.estate.booking</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" string="Confirm Booking" type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_agreement" string="Sign Agreement" type="object" class="btn-primary"
+                            invisible="state != 'booked'"
+                            groups="real_estate_management.group_real_estate_manager"/>
+                    <button name="action_generate_plan" string="Generate Installment Plan" type="object"
+                            class="btn-primary" invisible="state != 'agreement'"
+                            groups="real_estate_management.group_real_estate_manager"/>
+                    <button name="action_handover" string="Handover" type="object" class="btn-primary"
+                            invisible="state != 'installment'"
+                            groups="real_estate_management.group_real_estate_manager"/>
+                    <button name="action_open_reschedule" string="Reschedule" type="object"
+                            invisible="state != 'installment'"
+                            groups="real_estate_management.group_real_estate_manager"/>
+                    <button name="action_open_cancel" string="Cancel Booking" type="object"
+                            invisible="state not in ('booked', 'agreement', 'installment')"
+                            groups="real_estate_management.group_real_estate_manager"/>
+                    <button name="action_cancel_draft" string="Cancel" type="object"
+                            invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,booked,agreement,installment,handover"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_lines" type="object" class="oe_stat_button" icon="fa-calendar">
+                            <field name="line_count" widget="statinfo" string="Installments"/>
+                        </button>
+                        <button name="action_view_invoices" type="object" class="oe_stat_button"
+                                icon="fa-pencil-square-o"
+                                groups="real_estate_management.group_real_estate_accountant">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Cancelled" bg_color="text-bg-danger"
+                            invisible="state != 'cancel'"/>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group name="main">
+                            <field name="partner_id" readonly="state != 'draft'"/>
+                            <field name="unit_id" readonly="state != 'draft'" options="{'no_create': True}"/>
+                            <field name="project_id"/>
+                            <field name="building_id"/>
+                        </group>
+                        <group name="info">
+                            <field name="booking_date" readonly="state != 'draft'"/>
+                            <field name="agent_id" readonly="state not in ('draft', 'booked')"/>
+                            <field name="user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Pricing &amp; Installment Plan" name="plan">
+                            <group>
+                                <group string="Price">
+                                    <field name="unit_price" readonly="state != 'draft'"/>
+                                    <field name="discount" readonly="state != 'draft'"/>
+                                    <field name="total_price"/>
+                                </group>
+                                <group string="Payment Schedule">
+                                    <field name="booking_money" readonly="state != 'draft'"/>
+                                    <field name="down_payment" readonly="state in ('installment', 'handover', 'cancel')"/>
+                                    <field name="down_payment_date" readonly="state in ('installment', 'handover', 'cancel')"/>
+                                    <field name="handover_amount" readonly="state in ('installment', 'handover', 'cancel')"/>
+                                    <field name="handover_due_date" readonly="state in ('installment', 'handover', 'cancel')"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Monthly Installments">
+                                    <field name="installment_count" readonly="state in ('installment', 'handover', 'cancel')"/>
+                                    <field name="interval_months" readonly="state in ('installment', 'handover', 'cancel')"/>
+                                    <field name="first_installment_date" readonly="state in ('installment', 'handover', 'cancel')"/>
+                                </group>
+                                <group string="Calculation">
+                                    <field name="remaining_amount"/>
+                                    <field name="installment_amount"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Installments" name="lines">
+                            <field name="line_ids" readonly="1">
+                                <list decoration-danger="state == 'overdue'" decoration-success="state == 'paid'"
+                                      decoration-muted="state == 'cancel'">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="due_date"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="amount"/>
+                                    <field name="late_fee"/>
+                                    <field name="total_amount"/>
+                                    <field name="paid_date"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer">
+                                <field name="paid_amount"/>
+                                <field name="balance_amount"/>
+                                <field name="overdue_amount"/>
+                            </group>
+                        </page>
+                        <page string="Commission" name="commission">
+                            <field name="commission_ids" readonly="1">
+                                <list>
+                                    <field name="agent_id"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="rate"/>
+                                    <field name="amount"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Summary" name="summary">
+                            <group>
+                                <group>
+                                    <field name="progress" widget="progressbar"/>
+                                    <field name="overdue_count"/>
+                                    <field name="agreement_date"/>
+                                    <field name="handover_date"/>
+                                </group>
+                                <group invisible="state != 'cancel'">
+                                    <field name="cancel_date"/>
+                                    <field name="refund_amount"/>
+                                    <field name="cancel_reason"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_booking_search" model="ir.ui.view">
+        <field name="name">real.estate.booking.search</field>
+        <field name="model">real.estate.booking</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="unit_id"/>
+                <field name="agent_id"/>
+                <field name="project_id"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="running" string="Running"
+                        domain="[('state', 'in', ('booked', 'agreement', 'installment'))]"/>
+                <filter name="overdue" string="Has Overdue" domain="[('line_ids.state', '=', 'overdue')]"/>
+                <filter name="handover" string="Handed Over" domain="[('state', '=', 'handover')]"/>
+                <filter name="my_bookings" string="My Bookings" domain="[('user_id', '=', uid)]"/>
+                <group>
+                    <filter name="group_project" string="Project" context="{'group_by': 'project_id'}"/>
+                    <filter name="group_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
+                    <filter name="group_customer" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_month" string="Booking Month" context="{'group_by': 'booking_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_booking_pivot" model="ir.ui.view">
+        <field name="name">real.estate.booking.pivot</field>
+        <field name="model">real.estate.booking</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="project_id" type="row"/>
+                <field name="booking_date" interval="month" type="col"/>
+                <field name="total_price" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_booking_graph" model="ir.ui.view">
+        <field name="name">real.estate.booking.graph</field>
+        <field name="model">real.estate.booking</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="project_id"/>
+                <field name="total_price" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_booking" model="ir.actions.act_window">
+        <field name="name">Bookings</field>
+        <field name="res_model">real.estate.booking</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_booking_search"/>
+    </record>
+</odoo>

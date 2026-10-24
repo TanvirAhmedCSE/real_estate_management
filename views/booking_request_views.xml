@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_booking_request_list" model="ir.ui.view">
+        <field name="name">real.estate.booking.request.list</field>
+        <field name="model">real.estate.booking.request</field>
+        <field name="arch" type="xml">
+            <list create="0" decoration-muted="state == 'cancelled'" decoration-success="state == 'converted'">
+                <field name="request_date"/>
+                <field name="customer_name"/>
+                <field name="customer_email"/>
+                <field name="customer_phone"/>
+                <field name="unit_id"/>
+                <field name="unit_state" widget="badge"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_booking_request_form" model="ir.ui.view">
+        <field name="name">real.estate.booking.request.form</field>
+        <field name="model">real.estate.booking.request</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <header>
+                    <button name="action_create_booking" string="Create Booking" type="object"
+                            class="btn-primary" invisible="state != 'pending'"/>
+                    <button name="action_cancel" string="Cancel Request" type="object"
+                            invisible="state != 'pending'" confirm="Cancel this booking request?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,converted"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="alert" invisible="not push_pending">
+                        The new status has not reached the app yet. It is retried the next time
+                        Booking Requests is opened.
+                    </div>
+                    <div class="oe_title"><h1><field name="customer_name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="customer_email" widget="email"/>
+                            <field name="customer_phone" widget="phone"/>
+                            <field name="request_date"/>
+                        </group>
+                        <group>
+                            <field name="unit_id"/>
+                            <field name="unit_state"/>
+                            <field name="booking_id"/>
+                            <field name="push_pending" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_booking_request_search" model="ir.ui.view">
+        <field name="name">real.estate.booking.request.search</field>
+        <field name="model">real.estate.booking.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="customer_name"/>
+                <field name="customer_email"/>
+                <field name="customer_phone"/>
+                <field name="unit_id"/>
+                <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="converted" string="Booking Created" domain="[('state', '=', 'converted')]"/>
+                <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <group>
+                    <filter name="group_unit" string="Unit" context="{'group_by': 'unit_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_booking_request" model="ir.actions.act_window">
+        <field name="name">Booking Requests</field>
+        <field name="res_model">real.estate.booking.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_booking_request_search"/>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+
+    <!-- Menu entry: pulls fresh requests from the app server, then opens the list -->
+    <record id="action_booking_request_sync" model="ir.actions.server">
+        <field name="name">Booking Requests</field>
+        <field name="model_id" ref="model_real_estate_booking_request"/>
+        <field name="group_ids" eval="[(4, ref('group_real_estate_agent'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open_requests()</field>
+    </record>
+
+    <!-- Unit list/form action menu: resend selected units to the app server -->
+    <record id="action_unit_sync_to_app" model="ir.actions.server">
+        <field name="name">Sync to App</field>
+        <field name="model_id" ref="model_real_estate_unit"/>
+        <field name="binding_model_id" ref="model_real_estate_unit"/>
+        <field name="group_ids" eval="[(4, ref('group_real_estate_manager'))]"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_sync_to_app()</field>
+    </record>
+</odoo>
