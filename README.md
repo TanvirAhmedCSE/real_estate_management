@@ -359,6 +359,8 @@ erDiagram
 
 ## Screenshots
 
+#### Manager
+
 <img src="module screenshots/41.png" width="700"/>
 
 <img src="module screenshots/40a.png" width="700"/>
@@ -379,7 +381,7 @@ erDiagram
 
 <img src="module screenshots/36.png" width="700"/>
 
-##### Mobile App (Booking Request) 
+##### Customer Mobile App (Booking Request) 
 <table>
   <tr>
     <td align="center"><img src="module screenshots/1b.jpg" width="220"/></td>
@@ -431,6 +433,8 @@ erDiagram
 
 <img src="module screenshots/23.png" width="700"/>
 
+#### Accountant
+
 <img src="module screenshots/19.png" width="700"/>
 
 <img src="module screenshots/20.png" width="700"/>
@@ -440,6 +444,8 @@ erDiagram
 <img src="module screenshots/17.png" width="700"/>
 
 <img src="module screenshots/16.png" width="700"/>
+
+#### Sales Agent
 
 <img src="module screenshots/15.png" width="700"/>
 
@@ -454,6 +460,8 @@ erDiagram
 <img src="module screenshots/10.png" width="700"/>
 
 <img src="module screenshots/9.png" width="700"/>
+
+#### Portal customer
 
 <img src="module screenshots/4.png" width="700"/>
 
