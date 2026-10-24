@@ -435,7 +435,7 @@ erDiagram
 
 <img src="module screenshots/5.png" width="700"/>
 
-<img src="module screenshots/3.png" width="700"/>
+<img src="module screenshots/3a.png" width="700"/>
 
 <img src="module screenshots/1.png" width="700"/>
 
